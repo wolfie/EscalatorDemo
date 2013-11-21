@@ -1,0 +1,32 @@
+#escalator {
+	height: 204px;
+	position: relative;
+	margin-top: 20px;
+	left: 20px;
+	width: 204px;
+	border: 5px solid black;
+}
+
+#mask {
+	position: absolute;
+	top: -50px;
+	left: -50px;
+	height: 300px;
+	width: 300px;
+	background-image: url(mask.png);
+}
+
+.row {
+	position: absolute; 
+	width: 200px;
+	border: 2px solid grey;
+	height: 20px;
+	border-radius: 4px;
+	background-color: white;
+}
+
+#controller {
+	position: absolute;
+	left: 500px;
+	top: 20px;
+}

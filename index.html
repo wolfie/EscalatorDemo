@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="US-ASCII">
+<title>Escalator demos</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="jquery.color.plus-names-2.1.2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<div id="escalator">
+	<!-- <div id="mask"></div>-->
+</div>
+
+<div id="controller">
+	<button id="reset">Reset</button>
+	<input type="checkbox" id="contd"><label for="contd"> All steps at once?</label>
+	<br>
+	<button id="scroll">Scroll</button>
+	<button id="addRow">Add one row</button>
+</div>
+
+<script type="text/javascript">
+var rows = 10;
+var visualRows = [];
+var continuous = false;
+
+var scrollStep = 0;
+var scrollSteps = [
+	function() {
+		$("#escalator").animate({top: "+=20"}, 300);
+		$(".row").animate({top: "-=20"}, 300);
+	},
+	
+	function() {
+		visualRows[0]
+			.animate({backgroundColor: "red"}, 50)
+			.animate({left:"200"},100)
+			;
+	},
+	
+	function() {
+		var firstRow = visualRows.shift();
+		visualRows.push(firstRow);
+		firstRow
+			//.animate({backgroundColor: "red"}, 50)
+			.animate({top:"+=200"}, 200)
+			.animate({left:"0"},100)
+			;
+	}
+];
+
+var addStep = 0;
+var addSteps = [
+	function() {
+		visualRows[visualRows.length-1]
+			.animate({left: "210"}, 200)
+			;
+	},
+	
+	function() {
+		for (var i=5; i<visualRows.length-1; i++) {
+			visualRows[i]
+				.animate({top: "+=20"}, 200);
+		}
+	},
+	
+	function() {
+		var row = visualRows.pop()
+		visualRows.splice(5, 0, row);
+		row
+			.animate({top: "100"}, 200)
+			.animate({backgroundColor: "green"}, 200)
+			.animate({left: "0"}, 200)
+			;
+	}
+];
+
+(function() {
+	for (var i=0; i<rows; i++) {
+		var row = jQuery('<div class="row" style="top:'+(i*20)+'px"></div>');
+		visualRows.push(row);
+		$("#escalator").prepend(row);
+	}
+})();
+
+$("#contd").change(function() {
+	continuous = this.checked;
+})
+
+$("#reset").click(function() {
+	$(".row").animate({backgroundColor: "white"}, 100);
+	$("#escalator").animate({top: "0"}, 100);
+})
+
+var disableAllButtons =function () {
+	$("button,input").attr("disabled", "disabled");
+}
+
+var enableAllButtons= function() {
+	$("button,input").removeAttr("disabled");
+}
+
+var animate = function(functionArray, i) {
+	disableAllButtons();
+	functionArray[i]();
+	i = (i+1) % functionArray.length;
+	if (continuous && i != 0) {
+		i = animate(functionArray, i);
+	}
+	$("div").promise().done(enableAllButtons);
+	return i;
+}
+
+$("#scroll").click(function() {
+	scrollStep = animate(scrollSteps, scrollStep);
+});
+
+$("#addRow").click(function() {
+	addStep = animate(addSteps, addStep);
+});
+
+
+</script>
+
+</body>
+</html>
